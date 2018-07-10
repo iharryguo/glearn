@@ -1,0 +1,159 @@
+apply plugin: 'com.android.application'
+
+android {
+
+    flavorDimensions "one"
+
+    compileSdkVersion 26
+    buildToolsVersion '27.0.3'
+    lintOptions {
+        abortOnError true
+    }
+
+    defaultConfig {
+        applicationId "com.coollen.radio"
+        minSdkVersion 15
+        targetSdkVersion 26
+
+        versionCode 76
+        versionName "1.0.0001"
+
+        vectorDrawables.useSupportLibrary = true
+
+        // Define your application name here.
+        // It must neither be present in /res/values/strings.xml
+        // nor in /res/values/string_no_translate.xml
+        // resValue 'string', 'app_name', '环球听学'
+    }
+
+    sourceSets {
+        // Store flags in subfolder to not pollute drawables
+        // https://antonioleiva.com/android-multiple-resource-folders/
+        main.res.srcDirs += ["src/main/res/drawable/flags"]
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+
+            lintOptions {
+                disable 'MissingTranslation'
+            }
+        }
+    }
+    productFlavors {
+        play {
+            dimension "one"
+        }
+        free {
+            dimension "one"
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support:preference-v7:26.1.0'
+    implementation 'com.android.support:mediarouter-v7:26.1.0'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
+    implementation 'com.google.android.exoplayer:exoplayer:r2.5.4'
+    implementation 'com.github.rustamg:file-dialogs:1.0'
+    playImplementation 'com.google.android.gms:play-services-cast:15.0.1'
+    playImplementation 'com.google.android.gms:play-services-cast-framework:15.0.1'
+
+    // 腾讯push 和 信鸽  但这个信鸽没卵用，两个月前在语音指令app上成功过，后来再也不行了
+    compile 'com.tencent.tac:tac-core:1.2.+'
+    compile 'com.tencent.tac:tac-crash:1.2.+'
+    compile 'com.tencent.tac:tac-messaging:1.2.+'
+}
+
+
+// https://stackoverflow.com/questions/24649240/build-release-apk-with-customize-name-format-in-android-studio
+// https://stackoverflow.com/questions/32092665/resolve-application-label-for-each-build-type/32220436#32220436
+// https://stackoverflow.com/questions/18332474/how-to-set-versionname-in-apk-filename-using-gradle
+
+// Gradle 3.0
+// https://stackoverflow.com/questions/44800028/change-apk-filename-in-gradle-failed-with-gradle3-0-0-alpha4
+
+android.applicationVariants.all { variant ->
+
+    variant.outputs.all { output ->
+
+        // get app_name field from defaultConfig
+        // def appName = variant.mergedFlavor.resValues.get('app_name').getValue()
+        def appName = 'glearn'
+        appName = "${appName}"
+
+        // concat new App name with each flavor's name
+
+        variant.productFlavors.each { flavor ->
+            appName += "-${flavor.name}"
+        }
+
+        // optionally add buildType name
+        appName += "-${variant.buildType.name}"
+
+        // your requirement: if buildType == debug, add DEV to App name
+        if (variant.buildType.name == "debug") {
+            appName += "-DEV"
+        }
+
+        // if you want, you can set a new resValue
+        // variant.resValue 'string', 'app_name', appName
+
+        /*
+         * Gets the version name from the latest Git tag
+         */
+
+        def gitHash = { ->
+            def stdout = new ByteArrayOutputStream()
+            try {
+                exec {
+                    commandLine 'git', 'rev-parse', '--short', 'HEAD'
+                    standardOutput = stdout
+                }
+                return stdout.toString().trim()
+            } catch (Exception ignored) {
+                return "No commit hash"
+            }
+        }
+
+        resValue 'string', 'GIT_HASH', gitHash()
+
+        def getBuildDate = {
+            new Date().format('yyyy-MM-dd HH:mm:ss')
+        }
+
+        resValue 'string', 'BUILD_DATE', getBuildDate()
+
+        def finalName = appName
+
+        if (!versionName.isEmpty()) {
+            finalName += "-" + versionName
+        }
+
+        finalName += "-" + gitHash() + ".apk"
+        // outputFileName = "${variant.name}-${variant.versionName}.apk"
+        outputFileName = finalName
+    }
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '26.1.0'
+            }
+        }
+    }
+}
+
+apply plugin: 'com.tencent.tac.services'
