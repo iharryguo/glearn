@@ -130,66 +130,69 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 	}
 
 	private void showMainPage(Bundle savedInstanceState) {
-		if (sharedPref == null) {
-			PreferenceManager.setDefaultValues(mActivity, R.xml.preferences, false);
-			sharedPref = PreferenceManager.getDefaultSharedPreferences(mActivity);
-		}
-		mActivity.setTheme(Utils.getThemeResId(mActivity));
-		mActivity.setContentView(R.layout.layout_main);
+		// 这函数里crash过。因为showMainPage()是异步调用，所以执行到这里时Activity可能已经要死了，此时就不能再去初始化mainpage了
+		if (!mActivity.isFinishing())
+		{
+			if (sharedPref == null) {
+				PreferenceManager.setDefaultValues(mActivity, R.xml.preferences, false);
+				sharedPref = PreferenceManager.getDefaultSharedPreferences(mActivity);
+			}
+			mActivity.setTheme(Utils.getThemeResId(mActivity));
+			mActivity.setContentView(R.layout.layout_main);
 
-		try {
-			File dir = new File(mActivity.getFilesDir().getAbsolutePath());
-			if (dir.isDirectory()) {
-				String[] children = dir.list();
-				for (String aChildren : children) {
-					if (BuildConfig.DEBUG) {
-						Log.d("MAIN", "delete file:" + aChildren);
-					}
-					try {
-						new File(dir, aChildren).delete();
-					} catch (Exception e) {
+			try {
+				File dir = new File(mActivity.getFilesDir().getAbsolutePath());
+				if (dir.isDirectory()) {
+					String[] children = dir.list();
+					for (String aChildren : children) {
+						if (BuildConfig.DEBUG) {
+							Log.d("MAIN", "delete file:" + aChildren);
+						}
+						try {
+							new File(dir, aChildren).delete();
+						} catch (Exception e) {
+						}
 					}
 				}
+			} catch (Exception e) {
 			}
-		} catch (Exception e) {
+
+			final Toolbar myToolbar = mActivity.findViewById(R.id.my_awesome_toolbar);
+			mActivity.setSupportActionBar(myToolbar);
+
+			PlayerServiceUtil.bind(mActivity);
+			setupBroadcastReceiver();
+
+			selectedMenuItem = sharedPref.getInt("last_selectedMenuItem", -1);
+			instanceStateWasSaved = savedInstanceState != null;
+			mFragmentManager = mActivity.getSupportFragmentManager();
+
+			mDrawerLayout = mActivity.findViewById(R.id.drawerLayout);
+			mNavigationView = mActivity.findViewById(R.id.my_navigation_view);
+			mBottomNavigationView = mActivity.findViewById(R.id.bottom_navigation);
+			mViewVariablesInited = true;
+
+			if (Utils.bottomNavigationEnabled(mActivity)) {
+				mBottomNavigationView.setOnNavigationItemSelectedListener(mActivity);
+				mNavigationView.setVisibility(View.GONE);
+				mNavigationView.getLayoutParams().width = 0;
+			} else {
+				mNavigationView.setNavigationItemSelectedListener(mActivity);
+				mBottomNavigationView.setVisibility(View.GONE);
+
+				ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(mActivity, mDrawerLayout, R.string.app_name, R.string.app_name);
+				mDrawerLayout.addDrawerListener(mDrawerToggle);
+				mDrawerToggle.syncState();
+
+				mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+				mActivity.getSupportActionBar().setHomeButtonEnabled(true);
+			}
+
+			FragmentPlayer f = new FragmentPlayer();
+			FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+			fragmentTransaction.replace(R.id.playerView, f).commit();
+			setupStartUpFragment();
 		}
-
-		final Toolbar myToolbar = mActivity.findViewById(R.id.my_awesome_toolbar);
-		mActivity.setSupportActionBar(myToolbar);
-
-		PlayerServiceUtil.bind(mActivity);
-		setupBroadcastReceiver();
-
-		selectedMenuItem = sharedPref.getInt("last_selectedMenuItem", -1);
-		instanceStateWasSaved = savedInstanceState != null;
-		mFragmentManager = mActivity.getSupportFragmentManager();
-
-		mDrawerLayout = mActivity.findViewById(R.id.drawerLayout);
-		mNavigationView = mActivity.findViewById(R.id.my_navigation_view);
-		mBottomNavigationView = mActivity.findViewById(R.id.bottom_navigation);
-		mViewVariablesInited = true;
-
-		if (Utils.bottomNavigationEnabled(mActivity)) {
-			mBottomNavigationView.setOnNavigationItemSelectedListener(mActivity);
-			mNavigationView.setVisibility(View.GONE);
-			mNavigationView.getLayoutParams().width = 0;
-		} else {
-			mNavigationView.setNavigationItemSelectedListener(mActivity);
-			mBottomNavigationView.setVisibility(View.GONE);
-
-			ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(mActivity, mDrawerLayout, R.string.app_name, R.string.app_name);
-			mDrawerLayout.addDrawerListener(mDrawerToggle);
-			mDrawerToggle.syncState();
-
-			mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-			mActivity.getSupportActionBar().setHomeButtonEnabled(true);
-		}
-
-		FragmentPlayer f = new FragmentPlayer();
-		FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-		fragmentTransaction.replace(R.id.playerView, f).commit();
-		setupStartUpFragment();
-
 		LifeCycleStatus.isSplashShowing = false;
 	}
 
@@ -363,11 +366,13 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 			Log.d(TAG, "PAUSED");
 		}
 
-		if (!PlayerServiceUtil.isPlaying()) {
-			PlayerServiceUtil.shutdownService();
-		} else {
-			CastHandler.onPause();
-		}
+		// harryguo 切换到后台时为何要干掉播放service? 没道理。不干掉。
+//		if (!PlayerServiceUtil.isPlaying()) {
+//			PlayerServiceUtil.shutdownService();
+//		} else {
+//			CastHandler.onPause();
+//		}
+		CastHandler.onPause();
 
 		MPDClient.StopDiscovery();
 		MPDClient.setStateChangeListener(null);

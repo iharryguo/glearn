@@ -496,7 +496,9 @@ public class ItemAdapterStation
 
             @Override
             protected void onPostExecute(String result) {
-                Log.i(TAG, result);
+                // null will cause crash harryguo
+                if (result != null)
+                    Log.i(TAG, result);
                 super.onPostExecute(result);
             }
         }.execute();

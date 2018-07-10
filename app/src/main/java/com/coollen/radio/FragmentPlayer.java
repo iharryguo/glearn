@@ -61,7 +61,7 @@ public class FragmentPlayer extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
 		InitControls();
-		SetInfoFromHistory(true);
+		SetInfoFromHistory(!PlayerServiceUtil.isPlaying() && !MPDClient.isPlaying);
 		UpdateOutput();
 		setupIcon();
 
@@ -112,7 +112,7 @@ public class FragmentPlayer extends Fragment {
 						layoutPlaying.setVisibility(View.GONE);
 					}
 					if(PlayerServiceUtil.isPlaying())
-						PlayerServiceUtil.stop();
+						PlayerServiceUtil.pause();
 						// Don't stop MPD playback when a user is listening in the app
 					else if(MPDClient.isPlaying)
 						MPDClient.Stop(getContext());
