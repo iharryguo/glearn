@@ -61,7 +61,7 @@ public class FragmentPlayer extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
 		InitControls();
-		SetInfoFromHistory(false);
+		SetInfoFromHistory(true);
 		UpdateOutput();
 		setupIcon();
 
