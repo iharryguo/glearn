@@ -57,3 +57,10 @@
 -dontwarn com.huawei.android.hms.**
 -dontwarn com.xiaomi.push.**
 -dontwarn com.meizu.cloud.pushsdk.**
+
+# EventBus
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }

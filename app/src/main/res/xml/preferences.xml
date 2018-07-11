@@ -12,26 +12,27 @@
             android:summary="%s"/>
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="circular_icons"
             android:title="@string/settings_circular_icons" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="compact_style"
             android:title="@string/settings_compact_style" />
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="bottom_navigation"
-            android:title="@string/settings_bottom_navigation" />
+        <!--去除底部导航栏的设置项，因为这个太丑了-->
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="false"-->
+            <!--android:key="bottom_navigation"-->
+            <!--android:title="@string/settings_bottom_navigation" />-->
 
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_general">
 
         <ListPreference
-            android:defaultValue="@string/startup_show_history"
+            android:defaultValue="@string/startup_show_favorites"
             android:entries="@array/startup_action_entries"
             android:entryValues="@array/startup_action_entryvalues"
             android:key="startup_action"
@@ -91,7 +92,7 @@
             android:title="@string/settings_play_external" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="warn_no_wifi"
             android:summaryOff="@string/settings_warn_no_wifi_off"
             android:summaryOn="@string/settings_warn_no_wifi_on"
@@ -136,11 +137,12 @@
             android:title="@string/settings_record_name_formatting" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/settings_mpd">
-        <Preference
-            android:key="mpd_servers_viewer"
-            android:title="@string/settings_view_mpd_servers" />
-    </PreferenceCategory>
+    <!--屏蔽“您的服务器”设置-->
+    <!--<PreferenceCategory android:title="@string/settings_mpd">-->
+        <!--<Preference-->
+            <!--android:key="mpd_servers_viewer"-->
+            <!--android:title="@string/settings_view_mpd_servers" />-->
+    <!--</PreferenceCategory>-->
 
     <PreferenceCategory
         android:key="pref_category_connectivity"

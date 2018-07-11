@@ -5,6 +5,5 @@ package com.coollen.radio.lifecycle;
  */
 
 public class LifeCycleStatus {
-	public static boolean isInited = false;
 	public static boolean isSplashShowing = false;
 }

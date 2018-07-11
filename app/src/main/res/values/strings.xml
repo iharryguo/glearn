@@ -44,7 +44,7 @@
     <string name="about_version">Version: %1$s</string>
     <string name="detail_star">Bookmark as favorite</string>
     <string name="detail_unstar">Delete as favorite</string>
-    <string name="progress_loading">Loading...</string>
+    <string name="progress_loading">Loading…</string>
 
     <string name="sleep_timer" formatted="true">Sleep timer: %1$02d:%2$02d</string>
     <string name="sleep_timer_title">How many minutes before stop?</string>
@@ -234,4 +234,7 @@
     <string name="nav_item_about">About</string>
     <string name="settings_mpd_port">MPD port</string>
     <string name="refresh">Refresh</string>
+
+    <string name="alarm_time_start">Time to alarm radio…</string>
+    <string name="play_with_gprs">Play with mobile data traffic…</string>
 </resources>

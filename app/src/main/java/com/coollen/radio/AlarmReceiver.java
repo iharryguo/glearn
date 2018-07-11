@@ -36,7 +36,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         if(BuildConfig.DEBUG) { Log.d(TAG,"received broadcast"); }
         aquireLocks(context);
         
-        Toast toast = Toast.makeText(context, "Alarm!", Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(context, R.string.alarm_time_start, Toast.LENGTH_SHORT);
         toast.show();
 
         alarmId = intent.getIntExtra("id",-1);

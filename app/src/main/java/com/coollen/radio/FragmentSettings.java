@@ -65,13 +65,14 @@ public class FragmentSettings extends PreferenceFragmentCompat implements Shared
                 return false;
             }
         });
-        findPreference("mpd_servers_viewer").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                showAllMPDServers();
-                return false;
-            }
-        });
+			// harryguo 这个设置项被注释了，所以监听的代码也要注释
+//        findPreference("mpd_servers_viewer").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            @Override
+//            public boolean onPreferenceClick(Preference preference) {
+//                showAllMPDServers();
+//                return false;
+//            }
+//        });
 
         findPreference("show_statistics").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

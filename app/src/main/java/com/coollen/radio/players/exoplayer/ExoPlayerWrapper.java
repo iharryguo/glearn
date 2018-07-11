@@ -96,7 +96,7 @@ public class ExoPlayerWrapper implements PlayerWrapper, IcyDataSource.IcyDataSou
         isHls = streamUrl.endsWith(".m3u8");
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        final int retryTimeout = prefs.getInt("settings_retry_timeout", 4);
+        final int retryTimeout = prefs.getInt("settings_retry_timeout", 20);
         final int retryDelay = prefs.getInt("settings_retry_delay", 10);
 
         DataSource.Factory dataSourceFactory = new RadioDataSourceFactory(httpClient, bandwidthMeter, this, retryTimeout, retryDelay);

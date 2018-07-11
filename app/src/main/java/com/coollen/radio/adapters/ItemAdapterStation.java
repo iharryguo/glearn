@@ -225,7 +225,7 @@ public class ItemAdapterStation
                 holder.imageViewIcon.setImageDrawable(stationImagePlaceholder);
             }
 
-            if(prefs.getBoolean("compact_style", false))
+            if(prefs.getBoolean("compact_style", true))
                 setupCompactStyle(holder);
 
             if (prefs.getBoolean("icon_click_toggles_favorite", true)) {

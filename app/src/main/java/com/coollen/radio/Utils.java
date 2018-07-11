@@ -22,6 +22,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.coollen.radio.event.PlayStatus;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.coollen.cache.ACache;
@@ -32,6 +33,7 @@ import com.coollen.radio.BuildConfig;
 
 import com.coollen.radio.data.DataRadioStation;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -260,12 +262,14 @@ public class Utils {
 		boolean play_external = sharedPref.getBoolean("play_external", false);
 
 		Play(station,context,play_external);
+		EventBus.getDefault().post(new PlayStatus(PlayStatus.STATUS_PLAYING));
 	}
 
 	public static void Play(final DataRadioStation station, final Context context, final boolean external) {
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-		final boolean warn_no_wifi = sharedPref.getBoolean("warn_no_wifi", false);
-		if (warn_no_wifi && !Utils.hasWifiConnection(context)) {
+		final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+		final boolean warn_no_wifi = sharedPref.getBoolean("warn_no_wifi", true);
+		boolean isWifi = Utils.hasWifiConnection(context);
+		if (warn_no_wifi && !isWifi) {
 			ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
 			toneG.startTone(ToneGenerator.TONE_SUP_RADIO_NOTAVAIL, 2000);
 			/*Toast.makeText( getBaseContext(), Html.fromHtml( text ), Toast.LENGTH_LONG ).show();
@@ -281,12 +285,17 @@ public class Utils {
 					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 						@Override public void onClick(DialogInterface dialog, int which) {
 							playInternal(station, context, external);
+							sharedPref.edit().putBoolean("warn_no_wifi", false).apply();
 						}
 					})
 					.create()
 					.show();
 		} else {
 			playInternal(station, context, external);
+			if (!isWifi) {
+				Toast toast = Toast.makeText(context, R.string.play_with_gprs, Toast.LENGTH_SHORT);
+				toast.show();
+			}
 		}
 	}
 
@@ -377,7 +386,7 @@ public class Utils {
 
     public static boolean useCircularIcons(final Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPref.getBoolean("circular_icons", false);
+        return sharedPref.getBoolean("circular_icons", true);
     }
 
     // Storage Permissions

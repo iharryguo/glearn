@@ -40,6 +40,8 @@ import com.coollen.radio.MPDClient;
 import com.coollen.radio.PlayerServiceUtil;
 import com.coollen.radio.RadioBrowserServerManager;
 import com.coollen.radio.constant.ConstCommon;
+import com.coollen.radio.data.DataRadioStation;
+import com.coollen.radio.event.PlayStatus;
 import com.coollen.radio.interfaces.IFragmentRefreshable;
 import com.coollen.radio.presenter.ILifeCyclePresenter;
 import com.coollen.radio.splash.SplashManager;
@@ -62,6 +64,10 @@ import com.coollen.radio.Utils;
 import com.coollen.radio.data.MPDServer;
 import com.coollen.threadpool.ThreadPool;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -76,6 +82,9 @@ import java.util.List;
 
 public class LifeCyclePresenter implements ILifeCyclePresenter {
 	private static final String TAG = "LifeCyclePresenter";
+
+	private static boolean sIsInited = false;
+
 	private ActivityMain mActivity;
 	private boolean mViewVariablesInited = false;
 
@@ -104,13 +113,13 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
-		if (LifeCycleStatus.isInited)
+		if (sIsInited)
 		{
 			showMainPage(savedInstanceState);
 		}
 		else
 		{
-			LifeCycleStatus.isInited = true;
+			sIsInited = true;
 			// 先展示splash，同时初始化主页面，主页面初始化好了之后，再显示主页面，避免长时间白屏
 			showSplash();
 			ThreadPool.getInstance().uiHandler().postDelayed(new Runnable() {
@@ -188,9 +197,18 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 				mActivity.getSupportActionBar().setHomeButtonEnabled(true);
 			}
 
-			FragmentPlayer f = new FragmentPlayer();
-			FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-			fragmentTransaction.replace(R.id.playerView, f).commit();
+			// harryguo 如果不判断，这里有小概率会出现Can not perform this action after onSaveInstanceState
+			if (!mFragmentManager.isStateSaved()) {
+				FragmentPlayer f = new FragmentPlayer();
+				FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+				fragmentTransaction.replace(R.id.playerView, f).commit();
+
+				ApplicationMain appMain = (ApplicationMain) mActivity.getApplication();
+				DataRadioStation[] history = appMain.getHistoryManager().getList();
+				// 如果当前没有可播放的内容，就不显示
+				if (history.length == 0)
+					mActivity.findViewById(R.id.playerView).setVisibility(View.GONE);
+			}
 			setupStartUpFragment();
 		}
 		LifeCycleStatus.isSplashShowing = false;
@@ -351,6 +369,8 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 		PlayerServiceUtil.unBind(mActivity);
 		MPDClient.StopDiscovery();
 		mActivity.unregisterReceiver(broadcastReceiver);
+		// 不再监听事件
+		EventBus.getDefault().unregister(this);
 	}
 
 	@Override
@@ -657,7 +677,7 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 		HistoryManager hm = appMain.getHistoryManager();
 		FavouriteManager fm = appMain.getFavouriteManager();
 
-		final String startupAction = sharedPref.getString("startup_action", mActivity.getResources().getString(R.string.startup_show_history));
+		final String startupAction = sharedPref.getString("startup_action", mActivity.getResources().getString(R.string.startup_show_favorites));
 
 		if (startupAction.equals(mActivity.getResources().getString(R.string.startup_show_history)) && hm.isEmpty()) {
 			selectMenuItem(R.id.nav_item_stations);
@@ -746,6 +766,14 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 			}
 		};
 		mActivity.registerReceiver(broadcastReceiver, filter);
+		EventBus.getDefault().register(this);
+	}
+
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onMessageEvent(PlayStatus status)
+	{
+		if (status != null && status.value == PlayStatus.STATUS_PLAYING)
+			mActivity.findViewById(R.id.playerView).setVisibility(View.VISIBLE);
 	}
 
 	// Loading listener

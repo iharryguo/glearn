@@ -26,11 +26,11 @@ public class FragmentAbout extends Fragment {
 
 
             if (!gitHash.isEmpty()) {
-                version += " (git " + gitHash + ")";
+                gitHash = " (git " + gitHash + ")";
             }
 
             Resources resources = getResources();
-            aTextVersion.setText(resources.getString(com.coollen.radio.R.string.about_version, version+" "+buildDate));
+            aTextVersion.setText(resources.getString(com.coollen.radio.R.string.about_version, version + "\n" + buildDate + " " + gitHash));
 
         }
 
