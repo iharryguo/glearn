@@ -65,7 +65,7 @@ public class FragmentSettings extends PreferenceFragmentCompat implements Shared
                 return false;
             }
         });
-			// harryguo 这个设置项被注释了，所以监听的代码也要注释
+        // harryguo 杩欎釜璁剧疆椤硅娉ㄩ噴浜嗭紝鎵�浠ョ洃鍚殑浠ｇ爜涔熻娉ㄩ噴
 //        findPreference("mpd_servers_viewer").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 //            @Override
 //            public boolean onPreferenceClick(Preference preference) {
