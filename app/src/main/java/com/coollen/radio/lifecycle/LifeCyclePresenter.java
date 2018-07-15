@@ -770,10 +770,11 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 	}
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
-	public void onMessageEvent(PlayStatus status)
+	public int onMessageEvent(PlayStatus status)
 	{
 		if (status != null && status.value == PlayStatus.STATUS_PLAYING)
 			mActivity.findViewById(R.id.playerView).setVisibility(View.VISIBLE);
+		return 211985;
 	}
 
 	// Loading listener

@@ -262,7 +262,10 @@ public class Utils {
 		boolean play_external = sharedPref.getBoolean("play_external", false);
 
 		Play(station,context,play_external);
-		EventBus.getDefault().post(new PlayStatus(PlayStatus.STATUS_PLAYING));
+		// TODO harryguo test code 检验我改的EventBus的重要功能：调用订阅者并取得返回值
+		Object obj = EventBus.getDefault().process(new PlayStatus(PlayStatus.STATUS_PLAYING));
+		if (obj != null)
+			obj = obj;
 	}
 
 	public static void Play(final DataRadioStation station, final Context context, final boolean external) {

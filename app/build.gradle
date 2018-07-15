@@ -53,6 +53,7 @@ android {
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
@@ -68,7 +69,7 @@ dependencies {
     playImplementation 'com.google.android.gms:play-services-cast:15.0.1'
     playImplementation 'com.google.android.gms:play-services-cast-framework:15.0.1'
 
-    api 'org.greenrobot:eventbus:3.1.1'
+    // api 'org.greenrobot:eventbus:3.1.1'
 
     // 腾讯push 和 信鸽  但这个信鸽没卵用，两个月前在语音指令app上成功过，后来再也不行了
     api 'com.tencent.tac:tac-core:1.2.+'
