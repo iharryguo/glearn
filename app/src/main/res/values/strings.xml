@@ -29,7 +29,7 @@
     <string name="action_countries">Countries</string>
     <string name="action_languages">Languages</string>
     <string name="error_station_load">Could not connect to station</string>
-    <string name="error_list_update">Could not connect to radio browser server</string>
+    <string name="error_list_update">Fail to connect to server. Check whether network or system time setting is wrong</string>
 
     <string name="share_action">Share station link with..</string>
 

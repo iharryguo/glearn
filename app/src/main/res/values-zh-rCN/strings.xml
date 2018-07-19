@@ -29,7 +29,7 @@
     <string name="action_countries">国家</string>
     <string name="action_languages">语言</string>
     <string name="error_station_load">无法连接电台</string>
-    <string name="error_list_update">无法连接到服务器</string>
+    <string name="error_list_update">无法连接到服务器，请检查网络或系统时间设置是否正确</string>
 
     <string name="share_action">分享电台链接到..</string>
 
