@@ -110,6 +110,7 @@ public class FragmentPlayer extends Fragment {
 						textViewRecordingInfo.setText(recordingInfo);
 						PlayerServiceUtil.stopRecording();
 						layoutPlaying.setVisibility(View.GONE);
+						layoutRecording.setVisibility(View.VISIBLE);
 					}
 					if(PlayerServiceUtil.isPlaying())
 						PlayerServiceUtil.pause();
