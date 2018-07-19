@@ -120,14 +120,15 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 		else
 		{
 			sIsInited = true;
+			showMainPage(savedInstanceState);
 			// 先展示splash，同时初始化主页面，主页面初始化好了之后，再显示主页面，避免长时间白屏
-			showSplash();
-			ThreadPool.getInstance().uiHandler().postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					showMainPage(savedInstanceState);
-				}
-			}, 500);
+//			showSplash();
+//			ThreadPool.getInstance().uiHandler().postDelayed(new Runnable() {
+//				@Override
+//				public void run() {
+//					showMainPage(savedInstanceState);
+//				}
+//			}, 500);
 		}
 		CastHandler.onCreate(mActivity);
 	}

@@ -11,7 +11,7 @@
         <item name="windowActionBar">false</item>
         <item name="dialogTheme">@style/DialogTheme</item>
         <item name="alertDialogTheme">@style/AlertTheme</item>
-        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:windowBackground">@drawable/splash</item>
         <item name="android:statusBarColor">@color/colorPrimary</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -83,7 +83,7 @@
     </style>
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:windowBackground">@color/pageBackground</item>
     </style>
 
     <style name="DialogTheme.Dark" parent="Theme.AppCompat.Dialog">
@@ -91,7 +91,7 @@
     </style>
 
     <style name="AlertTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:windowBackground">@color/pageBackground</item>
     </style>
 
     <style name="AlertTheme.Dark" parent="Theme.AppCompat.Dialog.Alert">

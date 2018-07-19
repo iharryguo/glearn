@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:id="@+id/drawerLayout"
         android:layout_weight="0.5"
-        android:background="?android:attr/windowBackground"
+        android:background="@color/pageBackground"
         >
 
         <!-- The rest of your content view -->
@@ -70,7 +70,7 @@
             app:itemIconTint="@color/menu_text_color"
             app:menu="@menu/menu_drawer"
             android:layout_marginTop="0dp"
-            android:background="?android:attr/windowBackground"
+            android:background="@color/pageBackground"
             />
 
     </android.support.v4.widget.DrawerLayout>

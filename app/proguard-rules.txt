@@ -33,6 +33,9 @@
 -dontwarn javax.annotation.**
 -dontwarn org.conscrypt.**
 
+# MobileLine Crash
+-keep class com.tencent.bugly.** { *;}
+
 # MobileLine Messaging
 
 -keep class com.tencent.android.tpush.** {* ;}

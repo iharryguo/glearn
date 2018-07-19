@@ -3,9 +3,11 @@ package com.coollen.radio;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.ListViewCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,7 +36,17 @@ public class FragmentRecordings extends Fragment implements IFragmentRefreshable
         Intent i = new Intent(path);
         i.setAction(android.content.Intent.ACTION_VIEW);
         File file = new File(path);
-        i.setDataAndType(Uri.fromFile(file), "audio/*");
+        Uri uri;
+        // 判断版本大于等于7.0
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // "net.csdn.blog.ruancoder.fileprovider"即是在清单文件中配置的authorities
+            uri = FileProvider.getUriForFile(getContext(), getContext().getPackageName() + ".fileprovider", file);
+            // 给目标应用一个临时授权
+            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } else {
+            uri = Uri.fromFile(file);
+        }
+        i.setDataAndType(uri, "audio/*");
         startActivity(i);
     }
 
