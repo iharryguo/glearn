@@ -120,15 +120,14 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 		else
 		{
 			sIsInited = true;
-			showMainPage(savedInstanceState);
 			// 先展示splash，同时初始化主页面，主页面初始化好了之后，再显示主页面，避免长时间白屏
-//			showSplash();
-//			ThreadPool.getInstance().uiHandler().postDelayed(new Runnable() {
-//				@Override
-//				public void run() {
-//					showMainPage(savedInstanceState);
-//				}
-//			}, 500);
+			showSplash();
+			ThreadPool.getInstance().uiHandler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					showMainPage(savedInstanceState);
+				}
+			}, 1000);
 		}
 		CastHandler.onCreate(mActivity);
 	}
@@ -776,6 +775,14 @@ public class LifeCyclePresenter implements ILifeCyclePresenter {
 		if (status != null && status.value == PlayStatus.STATUS_PLAYING)
 			mActivity.findViewById(R.id.playerView).setVisibility(View.VISIBLE);
 		return 211985;
+	}
+
+	@Subscribe(filter = "100", threadMode = ThreadMode.MAIN, exclusive = true)
+	public static int onMessageEventExclusive(PlayStatus status)
+	{
+		if (status != null && status.value == PlayStatus.STATUS_PLAYING)
+			status = null;
+		return 211;
 	}
 
 	// Loading listener

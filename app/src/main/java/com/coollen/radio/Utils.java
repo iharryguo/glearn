@@ -266,6 +266,10 @@ public class Utils {
 		Object obj = EventBus.getDefault().process(new PlayStatus(PlayStatus.STATUS_PLAYING));
 		if (obj != null)
 			obj = obj;
+		EventBus.getDefault().post(new PlayStatus(PlayStatus.STATUS_PLAYING), "100");
+		obj = EventBus.getDefault().process(new PlayStatus(PlayStatus.STATUS_PLAYING), "101");
+		if (obj != null)
+			obj = obj;
 	}
 
 	public static void Play(final DataRadioStation station, final Context context, final boolean external) {

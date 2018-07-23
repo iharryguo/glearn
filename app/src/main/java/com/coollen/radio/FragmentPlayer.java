@@ -16,6 +16,11 @@ import android.widget.*;
 
 import com.coollen.radio.data.DataRadioStation;
 import com.coollen.radio.data.StreamLiveInfo;
+import com.coollen.radio.event.PlayStatus;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class FragmentPlayer extends Fragment {
 	TextView aTextViewName;
@@ -83,6 +88,16 @@ public class FragmentPlayer extends Fragment {
 			}
 		};
 		t.start();
+		// EventBus.getDefault().register(this);
+	}
+
+	@Subscribe(filter = "101", exclusive = true)
+	public static int onMessageEventExclusive(PlayStatus status)
+	{
+		if (status != null && status.value == PlayStatus.STATUS_PLAYING)
+			return 333;
+		else
+			return 444;
 	}
 
 	private void InitControls() {
